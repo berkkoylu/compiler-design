@@ -15,7 +15,7 @@ public class Parser {
 
     public void dummyMethod(){
 
-        List<Token> tokenList = lexer.getNextToken();
+        //List<Token> tokenList = lexer.getNextToken();
 
 
 
