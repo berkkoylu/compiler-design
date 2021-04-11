@@ -1,3 +1,1 @@
-int a = b + c ;
-if ( a == b ) { a = d ; }
-int s = null ;
+a = b + c

@@ -6,23 +6,54 @@ import java.util.*;
 
 public class Lexer {
 
-    private List<String> wordList;
+    private final List<String> wordList;
+    private static List<String> keyword ;
+    private static  List<String> operators ;
+
+
 
     public Lexer() throws FileNotFoundException {
+        keyword = new ArrayList<>();
+        operators = new ArrayList<>();
+        keyword.add("if");
+        keyword.add("else if");
+        keyword.add("else");
+        keyword.add("int");
+        keyword.add("double");
+        keyword.add("for");
+        keyword.add("while");
+        keyword.add("short");
+
+        operators.add("+");
+        operators.add("/");
+        operators.add("*");
+        operators.add("-");
+//        operators.add("%");
+//        operators.add("(");
+//        operators.add(")");
+//        operators.add("{");
+//        operators.add("}");
+//        operators.add("[");
+//        operators.add("]");
+//        operators.add(",");
+//        operators.add("||");
+//        operators.add("&&");
         this.wordList = readInputFile();
+
+
 
     }
 
     private List<String> readInputFile() throws FileNotFoundException {
          List<String> wordList = new LinkedList<>();
 
-        String file = "C:/Users/eray7/Documents/compiler-desing/compiler/input.txt";
+        String file = "input.txt";
         Scanner scanner = new Scanner(new File(file));
         scanner.useDelimiter(" ");
 
         while(scanner.hasNext()){
             String next = scanner.next();
-            if(next.contains("\r\n")){ //Burada eğer alt bir satıra geçiyorsak eğer wordliste bunu bildiriyoruz ve diğer indexe eklemeye devam ediyoruz aksi halde satır sonu ile satır başı beraber ekleniyodu
+            if(next.contains("\n")){ //Burada eğer alt bir satıra geçiyorsak eğer wordliste bunu bildiriyoruz ve diğer indexe eklemeye devam ediyoruz aksi halde satır sonu ile satır başı beraber ekleniyodu
                 char [] ch = new char[next.length()];
                 char [] ch2 = new char[next.length()];
 
@@ -35,7 +66,7 @@ public class Lexer {
                         String before2 = (String.valueOf(chars));
 
                         wordList.add(before2);
-                        next = next.replace("\r","");
+//                        next = next.replace("\r","");
                         next = next.replace("\n","");
 
                         for(int j = i-1 ; j<next.length();j++){
@@ -46,6 +77,7 @@ public class Lexer {
                             ch3[k-1] = ch2[k];
                         }
                         String after = new String(ch3);
+                         after = after.replace("\u0000", "");
                         after.replaceAll(String.valueOf((char) 0), "");
                         wordList.add(after);
                         break;
@@ -75,32 +107,10 @@ public class Lexer {
         List<Token> tokenList = new LinkedList<>();
         List<String> lexeme = new ArrayList<>();
 
-        List<String> keyword = new ArrayList<>();
-        keyword.add("if");
-        keyword.add("else if");
-        keyword.add("else");
-        keyword.add("int");
-        keyword.add("string");
-        keyword.add("double");
-        keyword.add("for");
-        keyword.add("while");
 
-        List<String> operators = new ArrayList<>();
-        operators.add("+");
-        operators.add("/");
-        operators.add("*");
-        operators.add("-");
-        operators.add("%");
-        operators.add("(");
-        operators.add(")");
-        operators.add("{");
-        operators.add("}");
-        operators.add("[");
-        operators.add("]");
-        operators.add(",");
-        operators.add("||");
-        operators.add("&&");
         for(int i = 0 ; i<wordList.size();i++){
+
+
             if(keyword.contains(wordList.get(i))){
                 lexeme.add("keyword");
             }else if(operators.contains(wordList.get(i))){
@@ -131,10 +141,36 @@ public class Lexer {
         }
         return lexeme;
     }
+
+    public List<Token> getNextTokenD() {//List<Token>'dı eskiden
+
+        Token token;
+        List<Token> tokenList = new LinkedList<>();
+//      List<String> lexeme = new ArrayList<>();
+
+
+        for (String lexeme : wordList) {
+
+
+            if(keyword.contains(lexeme)){
+                token = new Token("keyword", lexeme);
+                tokenList.add(token);
+            }else if(lexeme.equals("=")){
+                token = new Token("assign_op", lexeme);
+                tokenList.add(token);
+            }else if(operators.contains(lexeme)){
+                token = new Token("operator", lexeme);
+                tokenList.add(token);
+            }
+
+
+
+
+        }
+        return tokenList;
+    }
     public static boolean isNumeric(String string) {
         int intValue;
-
-
 
         if(string == null || string.equals("")) {
             System.out.println("String cannot be parsed, it is null or empty.");
