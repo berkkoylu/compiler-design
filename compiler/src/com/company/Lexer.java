@@ -7,19 +7,19 @@ import java.util.*;
 public class Lexer {
 
     private List<String> wordList;
+    private List<String> tokenList;
 
     public Lexer() throws FileNotFoundException {
         this.wordList = readInputFile();
-
+        this.tokenList = tokenization();
     }
 
     private List<String> readInputFile() throws FileNotFoundException {
-         List<String> wordList = new LinkedList<>();
+        List<String> wordList = new LinkedList<>();
 
-        String file = "C:/Users/eray7/Documents/compiler-desing/compiler/input.txt";
+        String file = "C:/Users/ozfat/IdeaProjects/compiler-desing/compiler/input.txt";
         Scanner scanner = new Scanner(new File(file));
         scanner.useDelimiter(" ");
-
         while(scanner.hasNext()){
             String next = scanner.next();
             if(next.contains("\r\n")){ //Burada eğer alt bir satıra geçiyorsak eğer wordliste bunu bildiriyoruz ve diğer indexe eklemeye devam ediyoruz aksi halde satır sonu ile satır başı beraber ekleniyodu
@@ -55,100 +55,67 @@ public class Lexer {
                         }else{
                             ch[i] = next.charAt(i);
                         }
-
                     }
                 }
-
-            }else{
+            }
+            else{
                 wordList.add(next);
             }
-
         }
         scanner.close();
+        System.out.println("wordList " + wordList);
         return wordList;
     }
 
+    public List<String> tokenization(){
 
-//    Identifierlara bakilicak asil kisim burasi
-    public List<String> getNextToken() {//List<Token>'dı eskiden
-
-        List<Token> tokenList = new LinkedList<>();
-        List<String> lexeme = new ArrayList<>();
-
-        List<String> keyword = new ArrayList<>();
-        keyword.add("if");
-        keyword.add("else if");
-        keyword.add("else");
-        keyword.add("int");
-        keyword.add("string");
-        keyword.add("double");
-        keyword.add("for");
-        keyword.add("while");
-
-        List<String> operators = new ArrayList<>();
-        operators.add("+");
-        operators.add("/");
-        operators.add("*");
-        operators.add("-");
-        operators.add("%");
-        operators.add("(");
-        operators.add(")");
-        operators.add("{");
-        operators.add("}");
-        operators.add("[");
-        operators.add("]");
-        operators.add(",");
-        operators.add("||");
-        operators.add("&&");
+        List<String> tokenList = new LinkedList<>();
+        Hashtable<String, String> ht = new Hashtable<>();
+        Token token = new Token();
+        String tokenClass;
+        String prevTokenClass;
+        Parser parser = new Parser();
+        boolean isDefined = false;
         for(int i = 0 ; i<wordList.size();i++){
-            if(keyword.contains(wordList.get(i))){
-                lexeme.add("keyword");
-            }else if(operators.contains(wordList.get(i))){
-                lexeme.add("operator");
-            }else if(isNumeric(wordList.get(i))){
-                lexeme.add("number");
-            }else if(wordList.get(i).equals("<")){
-                lexeme.add("less_op");
-            }else if(wordList.get(i).equals("<=")){
-                lexeme.add("le_op");
-            }else if(wordList.get(i).equals("=")){
-                lexeme.add("assign_op");
-            }else if(wordList.get(i).equals("<>")){
-                lexeme.add("not_op");
-            }else if(wordList.get(i).equals(">")){
-                lexeme.add("g_op");
-            }else if(wordList.get(i).equals(">=")){
-                lexeme.add("ge_op");
-            }else if(wordList.get(i).equals("==")){
-                lexeme.add("is_equal_op");
-            }else if(wordList.get(i).equals("!=")){
-                lexeme.add("is_not_equal_op");
-            }else if(wordList.get(i).equals(";")){
-                lexeme.add("end_op");
-            }else{
-                lexeme.add("id");
+
+            tokenClass = token.getToken(wordList.get(i));
+            tokenList.add(tokenClass);
+
+            if(tokenClass.equals("id")){
+                if(i==0){
+                    System.out.println("Error! " + wordList.get(i) + " is not identified.");
+                }
+                else{
+                    prevTokenClass = wordList.get(i-1);
+
+                    if(prevTokenClass.equals("int") || prevTokenClass.equals("short") || prevTokenClass.equals("double")){
+                        //System.out.println("prevTokenClass " + prevTokenClass + " for " + wordList.get(i));
+                        for(int j = 0; j<ht.size();j++){
+                            if(ht.containsKey(wordList.get(i))){
+                                System.out.println("Error! " + wordList.get(i) + " is previously defined.");
+                                isDefined = true;
+                                break;
+                            }
+                        }
+                        if (!isDefined){
+                            ht.put(wordList.get(i), prevTokenClass);
+                            //System.out.println("Hash table updated for " + wordList.get(i) );
+                            //System.out.println("Hash table  " + ht );
+                        }
+                        isDefined = false;
+                    }
+                    //id önceden tanımlanmamış
+                    if(!(ht.containsKey(wordList.get(i)))){
+                        System.out.println("Error! " + wordList.get(i) + " is not identified.");
+                    }
+                }
             }
-        }
-        return lexeme;
-    }
-    public static boolean isNumeric(String string) {
-        int intValue;
-
-
-
-        if(string == null || string.equals("")) {
-            System.out.println("String cannot be parsed, it is null or empty.");
-            return false;
+            parser.getNextToken(wordList.get(i), tokenClass);
         }
 
-        try {
-            intValue = Integer.parseInt(string);
-            return true;
-        } catch (NumberFormatException e) {
-
+        for (int i = 0; i < tokenList.size(); i++) {
+            System.out.print("<" + tokenList.get(i) + "," + wordList.get(i) + "> ");
         }
-        return false;
+        return tokenList;
     }
 }
-
-
