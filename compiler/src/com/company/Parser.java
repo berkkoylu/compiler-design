@@ -1,26 +1,17 @@
 package com.company;
 
-import java.util.List;
-
 public class Parser {
-    Lexer lexer;
 
+    private String token;
+    private String tokenClass;
     Parser(){
-    }
-    Parser(Lexer lexer){
-
-        this.lexer = lexer;
-    }
-
-
-    public void dummyMethod(){
-
-        //List<Token> tokenList = lexer.getNextToken();
-
-
 
     }
 
+    public void getNextToken(String lexeme, String tokenClass) {
 
+        this.token = lexeme;
+        this.tokenClass = tokenClass;
 
+    }
 }
