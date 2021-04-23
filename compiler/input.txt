@@ -1,3 +1,9 @@
+z = 5 ;
+int c ;
+double var ;
+short abc = 4 ;
 int a = b + c ;
-if ( a == b ) { a = d ; }
-int s = null ;
+5ttt ;
+if ( a == k ) { a = d ; }
+int _ ;
+int b__ ;
