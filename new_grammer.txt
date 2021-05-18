@@ -1,0 +1,23 @@
+Start → decls compoundstmt
+decls → declaration ; decls | ε
+declaration → type ID
+type → int | double | short
+compoundstmt → { statements }
+statements → statement statements | ε
+statement → ifstmt | whilestmt | assignment | compoundstmt | methodCall
+methodCall → ID ( optparameters ) ;
+optparameters → params | ε
+params → param A’
+A’ → , param A’ | ε
+param → ID | intNumber | doubleNumber | shortNumber
+ifstmt → if ( booleanExp ) statement  else  statement 
+whilestmt → while ( booleanExp )  statement 
+booleanExp → arithmeticExp booleanOp arithmeticExp
+booleanOp → < | > | <= | >= | == | !=
+assignment → ID = arithmeticExp ; | ID = unaryExp ; 
+unaryExp → ++ID|
+arithmeticExp → multexpr B’
+B’ → + multexpr B’ | - multexpr B’ | ε
+multexpr → simpleexpr C’
+C’ → * simpleexpr C’ | / simpleexpr C’ | ε
+simpleexpr → ID |intNumber | doubleNumber | shortNumber | ( arithmeticExp )

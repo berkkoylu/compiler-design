@@ -1,9 +1,8 @@
-z = 5 ;
-int c ;
-double var ;
-short abc = 4 ;
-int a = b + c ;
-5ttt ;
-if ( a == k ) { a = d ; }
-int _ ;
-int b__ ;
+int a ;
+int k ;
+int d ;
+{
+if ( a == k ) {
+a = d ;
+a = 10 ;
+} }

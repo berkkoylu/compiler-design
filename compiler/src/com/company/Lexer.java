@@ -7,22 +7,21 @@ import java.util.*;
 public class Lexer {
 
     private List<String> wordList;
-    private List<String> tokenList;
 
     public Lexer() throws FileNotFoundException {
         this.wordList = readInputFile();
-        this.tokenList = tokenization();
     }
 
     private List<String> readInputFile() throws FileNotFoundException {
         List<String> wordList = new LinkedList<>();
 
-        String file = "C:/Users/ozfat/IdeaProjects/compiler-desing/compiler/input.txt";
+        String file = "input.txt";
         Scanner scanner = new Scanner(new File(file));
         scanner.useDelimiter(" ");
+
         while(scanner.hasNext()){
             String next = scanner.next();
-            if(next.contains("\r\n")){ //Burada eğer alt bir satıra geçiyorsak eğer wordliste bunu bildiriyoruz ve diğer indexe eklemeye devam ediyoruz aksi halde satır sonu ile satır başı beraber ekleniyodu
+            if(next.contains("\n")){ //Burada eğer alt bir satıra geçiyorsak eğer wordliste bunu bildiriyoruz ve diğer indexe eklemeye devam ediyoruz aksi halde satır sonu ile satır başı beraber ekleniyodu
                 char [] ch = new char[next.length()];
                 char [] ch2 = new char[next.length()];
 
@@ -35,7 +34,7 @@ public class Lexer {
                         String before2 = (String.valueOf(chars));
 
                         wordList.add(before2);
-                        next = next.replace("\r","");
+//                        next = next.replace("\r","");
                         next = next.replace("\n","");
 
                         for(int j = i-1 ; j<next.length();j++){
@@ -46,6 +45,7 @@ public class Lexer {
                             ch3[k-1] = ch2[k];
                         }
                         String after = new String(ch3);
+                        after = after.replace("\u0000", "");
                         after.replaceAll(String.valueOf((char) 0), "");
                         wordList.add(after);
                         break;
@@ -55,32 +55,36 @@ public class Lexer {
                         }else{
                             ch[i] = next.charAt(i);
                         }
+
                     }
                 }
-            }
-            else{
+
+            }else{
                 wordList.add(next);
             }
+
         }
         scanner.close();
-        System.out.println("wordList " + wordList);
         return wordList;
     }
 
-    public List<String> tokenization(){
-
+    public List<Token> tokenization(){
+        List<Token> tokenPairList = new LinkedList<>();
         List<String> tokenList = new LinkedList<>();
         Hashtable<String, String> ht = new Hashtable<>();
+        List<String> stringOfTokens = new LinkedList<>();
         Token token = new Token();
         String tokenClass;
         String prevTokenClass;
-        Parser parser = new Parser();
         boolean isDefined = false;
+
         for(int i = 0 ; i<wordList.size();i++){
 
             tokenClass = token.getToken(wordList.get(i));
             tokenList.add(tokenClass);
-
+            Token token1 = new Token(tokenClass,wordList.get(i));
+            tokenPairList.add(token1);
+            stringOfTokens.add(tokenClass);
             if(tokenClass.equals("id")){
                 if(i==0){
                     System.out.println("Error! " + wordList.get(i) + " is not identified.");
@@ -110,12 +114,17 @@ public class Lexer {
                     }
                 }
             }
-            parser.getNextToken(wordList.get(i), tokenClass);
+//            if(tokenClass.equals("end_op")){
+//                //parser.getNextToken(wordList.get(i), tokenClass);
+//                parser.getNextToken(stringOfTokens);
+//                //System.out.println("stringOfTokens in lexer" + stringOfTokens);
+//                stringOfTokens.clear();
+//            }
         }
 
         for (int i = 0; i < tokenList.size(); i++) {
             System.out.print("<" + tokenList.get(i) + "," + wordList.get(i) + "> ");
         }
-        return tokenList;
+        return tokenPairList;
     }
 }
