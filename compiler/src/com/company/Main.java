@@ -11,6 +11,7 @@ public class Main {
         List<Token> tokenList = lexer.tokenization();
         Parser parser = new Parser(tokenList);
         boolean isSuccess  = parser.Start();
+        System.out.println();
         System.out.println(isSuccess);
     }
 }

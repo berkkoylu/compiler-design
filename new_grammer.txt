@@ -15,7 +15,7 @@ whilestmt → while ( booleanExp )  statement
 booleanExp → arithmeticExp booleanOp arithmeticExp
 booleanOp → < | > | <= | >= | == | !=
 assignment → ID = arithmeticExp ; | ID = unaryExp ; 
-unaryExp → ++ID|
+unaryExp → ++ ID 
 arithmeticExp → multexpr B’
 B’ → + multexpr B’ | - multexpr B’ | ε
 multexpr → simpleexpr C’

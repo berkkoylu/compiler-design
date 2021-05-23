@@ -1,5 +1,7 @@
 package com.company;
 
+import com.sun.xml.internal.bind.v2.model.core.ID;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -26,15 +28,18 @@ public class Parser {
     public boolean decls(){
 
         boolean result ;
+        int before = this.index;
 
         if(declaration()){
             if(term(";")){
                if (decls()){
                    result = true;
                }else{
+                   this.index = before;
                    result = false;
                }
             }else{
+                this.index = before;
                 result = false;
             }
         }else {
@@ -49,6 +54,7 @@ public class Parser {
     }
 
     public boolean type(){
+
         if(this.index != this.stringOfTokens.size()) {
             if ((Objects.equals(this.stringOfTokens.get(this.index).getTokenValue(), "int"))) {
                     this.index++;
@@ -76,45 +82,237 @@ public class Parser {
     }
 
     public boolean compoundstmt(){
-        return term("{") && statements() && term("}");
+
+        int before = this.index;
+        boolean result;
+
+        if (term("{")){
+            if (statements()){
+                if (term("}")){
+                    result = true;
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = false;
+        }
+
+
+
+        return result;
     }
 
     public boolean statements(){
-        return (statement() && statements()) || empty();
+
+        boolean result;
+        int before = this.index;
+
+
+        if(statement()){
+                if(statements()){
+                    result = true;
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                result = empty();
+            }
+
+        return result;
     }
 
     public boolean statement(){
-        return ifstmt() || whilestmt() || assignment() || compoundstmt() || methodCall();
+
+        boolean a = ifstmt();
+        boolean b = whilestmt();
+        boolean c = assignment();
+        boolean d = compoundstmt();
+        boolean f = methodCall();
+
+        boolean result = a || b || c || d || f;
+
+        return result;
     }
 
     public boolean methodCall(){
-        return IDtypes() && term("(") && optparameters() && term(")") && term("end_op" );
+        boolean result;
+        int before = this.index;
+
+        if (IDtypes()){
+            if (term("(")){
+                if (optparameters()){
+                    if (term(")")){
+                        if (term("end_op")){
+                            result = true;
+                        }else{
+                            this.index = before;
+                            result = false;
+                        }
+                    }else{
+                        this.index = before;
+                        result = false;
+                    }
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = false;
+        }
+
+
+        return result;
     }
 
     public boolean optparameters(){
-        return params() ||empty();
+
+        boolean result;
+
+                if (params()){
+                    result = true;
+                }else{
+                    result = empty();
+                }
+
+        return result;
     }
 
     public boolean params(){
-        return param() || APrime();
+        boolean result;
+        int before = this.index  ;
+
+        if (param()){
+            if (APrime()){
+                result = true;
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            this.index = before;
+            result = false;
+        }
+
+
+
+        return result;
     }
 
     public boolean APrime(){
-        return term(",") && param() && APrime() || empty();
+        boolean result;
+        int before = this.index  ;
+
+        if( term(",") ){
+            if(param()){
+                if (APrime()){
+                    result = true;
+                }else {
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = empty();
+        }
+
+        return result;
     }
 
     public boolean param(){
+
         return  IDtypes() || term("number") ||term("number") ||term("number");
     }
 
     public boolean ifstmt(){
-        return term("if") && term("(") && booleanExp() && term(")") &&
-                statement() && term("else")  && statement() ;
+        boolean result;
+        int before = this.index ;
+
+        if (term("if")  ){
+            if (term("(")){
+                if (booleanExp()){
+                    if (term(")")){
+                        if ( statement()){
+                            if (term("else") ){
+                                if ( statement()){
+                                    result = true;
+                                }else{
+                                    this.index = before;
+                                    result = false;
+                                }
+                            }else{
+                                this.index = before;
+                                result = false;
+                            }
+                        }else{
+                            this.index = before;
+                            result = false;
+                        }
+                    }else{
+                        this.index = before;
+                        result = false;
+                    }
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = false;
+        }
+
+        return result;
     }
 
     public boolean whilestmt(){
-        return term("while") && term("(") && booleanExp() && term(")")
-                && statement() ;
+        boolean result;
+        int before = this.index ;
+
+        if (term("while") ){
+            if (term("(") ) {
+                if (booleanExp() ){
+                    if (term(")")){
+                        if (statement()){
+                            result = true;
+                        }else{
+                            this.index = before;
+                            result = false;
+                        }
+                    }else{
+                        this.index = before;
+                        result = false;
+                    }
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = false;
+        }
+
+
+
+        return result ;
     }
 
     public boolean booleanExp(){
@@ -122,11 +320,39 @@ public class Parser {
     }
 
     public boolean booleanOp(){
+
+
+
         return term("<") || term(">") || term("<=") ||term(">=") ||term("==") || term("!=");
     }
 
     public boolean assignment(){
-        return IDtypes() && term("=") && arithmeticOrUnary() && term(";");
+
+        boolean result;
+        int before = this.index ;
+
+        if (IDtypes()){
+            if (term("=")){
+                if (arithmeticOrUnary()){
+                    if (term(";")){
+                        result = true;
+                    }else{
+                        this.index = before;
+                        result = false;
+                    }
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = false;
+        }
+
+        return result;
     }
 
     public boolean arithmeticOrUnary (){
@@ -134,7 +360,21 @@ public class Parser {
     }
 
     public boolean unaryExp(){
-        return term("++") && IDtypes();
+        boolean result;
+        int before = this.index ;
+
+        if(term("++")){
+            if (IDtypes()){
+                result = true;
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = false;
+        }
+
+        return result;
     }
 
     public boolean arithmeticExp(){
@@ -142,7 +382,39 @@ public class Parser {
     }
 
     public boolean BPrime(){
-        return term("+") && multexpr() && BPrime() || term("-") && multexpr() && BPrime() || empty();
+
+        boolean result;
+        int before = this.index ;
+
+        if (term("+")){
+            if (multexpr())  {
+                if (BPrime()){
+                    result = true;
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else if (term("-")){
+            if (multexpr()){
+                if (BPrime()){
+                    result = true;
+                }else {
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = empty();
+        }
+
+        return result;
     }
 
     public boolean multexpr(){
@@ -150,12 +422,65 @@ public class Parser {
     }
 
     public boolean CPrime(){
-        return term("*") && simpleexpr() && CPrime() || term("/") && simpleexpr() && CPrime() || empty();
+        boolean result;
+        int before = this.index ;
+
+
+        if (term("*")){
+            if (simpleexpr()){
+                if (CPrime()){
+                    result = true;
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else if (term("/")){
+            if (simpleexpr()){
+                if (CPrime()){
+                    result = true;
+                }else {
+                    this.index = before;
+                    result = false;
+                }
+            }else {
+                this.index = before;
+                result = false;
+            }
+        }else {
+            result = empty();
+        }
+
+        return result;
     }
 
     public boolean simpleexpr(){
-        return  IDtypes() || term("number") ||term("number") || term("number") ||
-                (term("(") && arithmeticExp() || term(")"));
+
+        boolean a = IDtypes();
+        boolean b = term("number");
+        boolean result ;
+        int before = this.index ;
+
+        if (term("(")){
+            if (arithmeticExp()){
+                if (term(")")){
+                    result = true;
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = false;
+        }
+
+        return  a || b || result;
     }
     public boolean IDtypes(){
         if(this.index != this.stringOfTokens.size()) {
