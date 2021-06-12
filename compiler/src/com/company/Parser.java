@@ -11,19 +11,145 @@ public class Parser {
     private String tokenClass;
     private int index;
     private final List<Token> stringOfTokens;
+    private final SemanticAnalyzer semanticAnalyzer;
 
     Parser(List<Token> stringOfTokens){
         this.stringOfTokens = stringOfTokens;
+        this.semanticAnalyzer = new SemanticAnalyzer();
     }
 
 
     public boolean Start(){
         this.index = 0;
 
+        boolean c = method();
         boolean a = decls();
         boolean b = compoundstmt();
-        return (a && b);
+        return (a && b && c) ;
     }
+    public boolean method(){
+
+        int before = this.index;
+        boolean result;
+
+        if (term("{")){
+            if (methodStatements()){
+                if (term("}")){
+                    result = true;
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = false;
+        }
+
+
+
+        return result;
+    }
+
+    public boolean methodStatements(){
+
+        boolean result;
+        int before = this.index;
+
+
+        if(methodStatement()){
+            if(methodStatements()){
+                result = true;
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else{
+            result = empty();
+        }
+
+        return result;
+
+    }
+
+    public boolean methoddecls (){
+        boolean result ;
+        int before = this.index;
+
+        if(declaration()){
+            semanticAnalyzer.getMethodIdentifierList().add(this.stringOfTokens.get(before + 1 ).getTokenValue());
+            if(term(",")){
+                if (methoddecls()){
+                    result = true;
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else{
+                this.index = before;
+                result = false;
+            }
+        }else {
+            result = empty();
+        }
+
+        return result;
+
+    }
+    public boolean methodStatement(){
+
+        boolean result ;
+        int before = this.index;
+        if(type()){
+            if(IDtypes()){
+                if(term("(")){
+                    if(methoddecls()){
+                        semanticAnalyzer.analyseMethodDecleration();
+                        if (term(")")){
+                            if(term("{")){
+                                if (statement()){
+                                    if (term("}")){
+                                        semanticAnalyzer.getSymbolTable().add(this.stringOfTokens.get(before + 1 ).getTokenValue());
+                                        result = true;
+                                    }else{
+                                        this.index = before;
+                                        result = false;
+                                    }
+                                }else{
+                                    this.index = before;
+                                    result = false;
+                                }
+                            }else{
+                                this.index = before;
+                                result = false;
+                            }
+
+                        }else{
+                            this.index = before;
+                            result = false;
+                        }
+                    }else{
+                        this.index = before;
+                        result = false;
+                    }
+                }else{
+                    this.index = before;
+                    result = false;
+                }
+            }else {
+                this.index = before;
+                result = false;
+            }
+        } else {
+            result = false;
+        }
+
+        return  result;
+
+    }
+
 
     public boolean decls(){
 
@@ -149,6 +275,7 @@ public class Parser {
                 if (optparameters()){
                     if (term(")")){
                         if (term("end_op")){
+                            semanticAnalyzer.getMethodCallList().add(this.stringOfTokens.get(before).getTokenValue());
                             result = true;
                         }else{
                             this.index = before;

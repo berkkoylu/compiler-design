@@ -14,5 +14,10 @@ public class Main {
         boolean isSuccess  = parser.Start();
         System.out.println();
         System.out.println(isSuccess);
+        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
+        semanticAnalyzer.analyse();
+
     }
+
+
 }
