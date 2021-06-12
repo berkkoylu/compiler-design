@@ -1,19 +1,27 @@
 {
-    int method1 ( int a , int c , ) {
-        while ( a > b  ) {
-        a = a + 1 ;
-        }
-    }
-
-    int method ( int a , int a , ) {
-        while ( a > b  ) {
-        a = a + 1 ;
-        }
-    }
+      int method1 ( int a , ) {
+          c = 10 ;
+          while ( a > b ) {
+          a = a + 1 ;
+          }
+           c = 10 ;
+      }
+       int method2 ( int a , ) {
+                c = 10 ;
+                while ( a > b ) {
+                a = a + 1 ;
+                }
+                 c = 10 ;
+       }
 }
+
 int b ;
-double b ;
+double a ;
+
 {
-    method2 ( a , a ) ;
-   a = a ;
+
+   method2 ( a , b  )
+   a = a + a ;
+   b = a ;
+
 }

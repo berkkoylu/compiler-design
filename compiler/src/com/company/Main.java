@@ -13,7 +13,7 @@ public class Main {
         Parser parser = new Parser(tokenList);
         boolean isSuccess  = parser.Start();
         System.out.println();
-        System.out.println(isSuccess);
+        System.out.println("Parser phase completed " + (isSuccess ? "Successfully" : "Failed ") );
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
         semanticAnalyzer.analyse();
 

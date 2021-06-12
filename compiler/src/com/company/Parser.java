@@ -109,7 +109,7 @@ public class Parser {
                         semanticAnalyzer.analyseMethodDecleration();
                         if (term(")")){
                             if(term("{")){
-                                if (statement()){
+                                if (statements()){
                                     if (term("}")){
                                         semanticAnalyzer.getSymbolTable().add(this.stringOfTokens.get(before + 1 ).getTokenValue());
                                         result = true;

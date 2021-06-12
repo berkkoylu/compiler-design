@@ -10,7 +10,7 @@ methoddecls →  declaration , methoddecls | ε
 
 method → { methodStatements } | e
 methodStatements → methodStatement methodStatements | e
-methodStatement → type ID ( methoddecls ) { statement }
+methodStatement → type ID ( methoddecls ) { statements }
 
 
 compoundstmt → { statements }
