@@ -458,9 +458,14 @@ public class Parser {
     }
 
     public boolean simpleexpr(){
+        boolean a = false ;
+        boolean b = false;
+        if (IDtypes()){
+            a = true;
+        }else if (term("number")){
+            b = true;
+        }
 
-        boolean a = IDtypes();
-        boolean b = term("number");
         boolean result ;
         int before = this.index ;
 

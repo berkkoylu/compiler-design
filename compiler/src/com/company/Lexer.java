@@ -1,16 +1,43 @@
 package com.company;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.util.*;
 
 public class Lexer {
 
     private List<String> wordList;
 
-    public Lexer() throws FileNotFoundException {
-        this.wordList = readInputFile();
+    public Lexer() throws IOException {
+        this.wordList = readInputFile1();
     }
+
+    
+    private List<String> readInputFile1() throws IOException {
+
+        String line, word = "";
+        int count = 0, maxCount = 0;
+        ArrayList<String> words = new ArrayList<String>();
+
+        //Opens file in read mode
+        FileReader file = new FileReader("input.txt");
+        BufferedReader br = new BufferedReader(file);
+
+        //Reads each line
+        while((line = br.readLine()) != null) {
+            String string[] = line.toLowerCase().split("([.\\s]+)");
+            //Adding all words generated in previous step into words
+            for(String s : string){
+                if(!s.equals("")){
+                    words.add(s);
+                }
+            }
+        }
+
+        return words;
+    }
+
+
+
 
     private List<String> readInputFile() throws FileNotFoundException {
         List<String> wordList = new LinkedList<>();
