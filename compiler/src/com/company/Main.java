@@ -10,12 +10,19 @@ public class Main {
 
         Lexer lexer = new Lexer();
         List<Token> tokenList = lexer.tokenization();
+        System.out.println();
         Parser parser = new Parser(tokenList);
         boolean isSuccess  = parser.Start();
+
+
         System.out.println();
-        System.out.println("Parser phase completed " + (isSuccess ? "Successfully" : "Failed ") );
+        System.out.println("Parser phase completed " + (isSuccess ? "Successfully." : "Failed.") );
+        System.out.println();
+
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
         semanticAnalyzer.analyse();
+        semanticAnalyzer.analyseId();
+        semanticAnalyzer.printErrorLogMethodDecleration();
 
     }
 

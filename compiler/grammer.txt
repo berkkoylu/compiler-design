@@ -1,21 +1,16 @@
 
-
 Start → method decls compoundstmt
 decls → declaration ; decls | ε
 declaration → type ID
 type → int | double | short
-
 methoddecls →  declaration , methoddecls | ε
-
-
 method → { methodStatements } | e
 methodStatements → methodStatement methodStatements | e
 methodStatement → type ID ( methoddecls ) { statements }
-
-
 compoundstmt → { statements }
 statements → statement statements | ε
-statement → ifstmt | whilestmt | assignment | compoundstmt | methodCall
+statement → ifstmt | whilestmt | assignment | compoundstmt | methodCall | statementDec
+statementDec → declaration ;
 methodCall → ID ( optparameters ) ;
 optparameters → params | ε
 params → param A’
